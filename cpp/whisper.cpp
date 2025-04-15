@@ -6488,6 +6488,9 @@ int64_t whisper_full_get_segment_t0_from_state(struct whisper_state * state, int
 }
 
 int64_t whisper_full_get_segment_t0(struct whisper_context * ctx, int i_segment) {
+    if (i_segment < 0 || i_segment >= (int)ctx->state->result_all.size()) {
+        return -1;
+    }
     return ctx->state->result_all[i_segment].t0;
 }
 
@@ -6496,6 +6499,9 @@ int64_t whisper_full_get_segment_t1_from_state(struct whisper_state * state, int
 }
 
 int64_t whisper_full_get_segment_t1(struct whisper_context * ctx, int i_segment) {
+    if (i_segment < 0 || i_segment >= (int)ctx->state->result_all.size()) {
+        return -1;
+    }
     return ctx->state->result_all[i_segment].t1;
 }
 
@@ -6504,6 +6510,9 @@ bool whisper_full_get_segment_speaker_turn_next_from_state(struct whisper_state 
 }
 
 bool whisper_full_get_segment_speaker_turn_next(struct whisper_context * ctx, int i_segment) {
+    if (i_segment < 0 || i_segment >= (int)ctx->state->result_all.size()) {
+        return false;
+    }
     return ctx->state->result_all[i_segment].speaker_turn_next;
 }
 
@@ -6512,6 +6521,9 @@ const char * whisper_full_get_segment_text_from_state(struct whisper_state * sta
 }
 
 const char * whisper_full_get_segment_text(struct whisper_context * ctx, int i_segment) {
+    if (i_segment < 0 || i_segment >= (int)ctx->state->result_all.size()) {
+        return "";
+    }
     return ctx->state->result_all[i_segment].text.c_str();
 }
 
@@ -6520,6 +6532,9 @@ int whisper_full_n_tokens_from_state(struct whisper_state * state, int i_segment
 }
 
 int whisper_full_n_tokens(struct whisper_context * ctx, int i_segment) {
+    if (i_segment < 0 || i_segment >= (int)ctx->state->result_all.size()) {
+        return 0;
+    }
     return ctx->state->result_all[i_segment].tokens.size();
 }
 
