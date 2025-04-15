@@ -420,19 +420,20 @@ struct rnwhisper_segments_callback_data {
                 void (^onNewSegments)(NSDictionary *) = (void (^)(NSDictionary *))data->onNewSegments;
                 onNewSegments(result);
             };
-            struct rnwhisper_segments_callback_data user_data = {
-                .onNewSegments = onNewSegments,
-                .tdrzEnable = options[@"tdrzEnable"] && [options[@"tdrzEnable"] boolValue],
-                .total_n_new = 0,
-            };
-            params.new_segment_callback_user_data = &user_data;
+            struct rnwhisper_segments_callback_data *user_data =
+                (struct rnwhisper_segments_callback_data *)calloc(1, sizeof(struct rnwhisper_segments_callback_data));
+
+            user_data->onNewSegments = onNewSegments;
+            user_data->tdrzEnable = [options[@"tdrzEnable"] boolValue];
+            user_data->total_n_new = 0;
+
+            params.new_segment_callback_user_data = user_data;
         }
 
         rnwhisper::job* job = rnwhisper::job_new(jobId, params);
         self->recordState.job = job;
         int code = [self fullTranscribe:job audioData:audioData audioDataCount:audioDataCount];
         rnwhisper::job_remove(jobId);
-        self->recordState.job = nullptr;
         self->recordState.isTranscribing = false;
         onEnd(code);
     });
@@ -447,7 +448,7 @@ struct rnwhisper_segments_callback_data {
 }
 
 - (void)stopTranscribe:(int)jobId {
-    if (self->recordState.job != nullptr) self->recordState.job->abort();
+    if (self->recordState.job) self->recordState.job->abort();
     if (self->recordState.isRealtime && self->recordState.isCapturing) {
         [self stopAudio];
         if (!self->recordState.isTranscribing) {
